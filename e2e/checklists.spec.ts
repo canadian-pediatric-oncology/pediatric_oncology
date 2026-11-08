@@ -14,9 +14,9 @@ test.describe("Checklists & Printable Guides", () => {
     // Verify Hospital Bag Card
     const hospitalBag = page.locator("interactive-checklist");
     await expect(hospitalBag).toBeVisible();
-    await expect(page.locator("h2").first()).toContainText(
-      "Hospital Bag Checklist",
-    );
+    await expect(
+      page.getByRole("heading", { level: 2, name: /Hospital Bag Checklist/i }),
+    ).toBeVisible();
 
     // Verify Checkboxes interactivity
     const firstCheckbox = hospitalBag.locator('input[type="checkbox"]').first();
