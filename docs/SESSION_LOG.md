@@ -299,4 +299,3 @@ This document serves as a continuous record of changes, ensuring full transparen
   6. **Unit Test Harness:** Added native `node:test` suite (`tests/unit/i18n-parity.test.mjs` and `tests/unit/content-schema.test.mjs`) wired into `npm run test:unit`, `npm test`, and `npm run ci` (5/5 tests passing in < 170ms).
   7. **Repository Hygiene:** Purged over 20 obsolete one-off migration and scratch scripts from `scripts/` and root (`gen_base64.cjs`, `update_urls.cjs`), added `pa11y: ^9.1.1` explicitly to `package.json`, and tightened CI link checking status codes.
 - **Status:** Verified locally. `npm run check` (0 errors), `npm run test:unit` (5/5 passing), `npm run ci` (0 errors, 107 pages generated), Playwright E2E (11/11 passing).
-
