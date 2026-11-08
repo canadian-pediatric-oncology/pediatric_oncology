@@ -1,0 +1,51 @@
+---
+import type { WeeklyTrackerData } from "../../data/checklistsData";
+
+export interface Props {
+  data: WeeklyTrackerData;
+}
+
+const { data } = Astro.props;
+---
+
+<div
+  class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-12 print:mb-0 print:shadow-none print:border-gray-300 page-break-after"
+>
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-900">{data.title}</h2>
+    <div class="text-lg text-gray-700">
+      <span class="font-semibold">{data.weekOf}</span> _____________________
+    </div>
+  </div>
+
+  <div class="overflow-x-auto print:overflow-visible">
+    <table class="w-full border-collapse border border-gray-300 text-sm">
+      <thead>
+        <tr class="bg-gray-50 print:bg-gray-100">
+          <th class="border border-gray-300 p-2 text-left w-1/5"></th>
+          {
+            data.days.map((day) => (
+              <th class="border border-gray-300 p-2 text-center font-medium">
+                {day}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          data.rows.map((row) => (
+            <tr>
+              <td class="border border-gray-300 p-2 font-medium text-gray-800 whitespace-nowrap">
+                {row}
+              </td>
+              {data.days.map(() => (
+                <td class="border border-gray-300 p-3 h-12" />
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

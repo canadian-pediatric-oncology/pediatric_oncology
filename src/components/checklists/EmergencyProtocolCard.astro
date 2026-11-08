@@ -1,0 +1,59 @@
+---
+import type { EmergencyFeverData } from "../../data/checklistsData";
+
+export interface Props {
+  data: EmergencyFeverData;
+}
+
+const { data } = Astro.props;
+---
+
+<div
+  class="bg-red-50 p-6 rounded-lg border-4 border-red-500 mb-12 print:mb-8 print:border-red-600 page-break-after"
+>
+  <h2 class="text-2xl font-bold text-red-700 mb-4 text-center">
+    {data.title}
+  </h2>
+
+  <div class="bg-white p-4 rounded mb-6 text-center shadow-sm">
+    <p class="text-xl font-bold text-red-600 mb-2">{data.warning}</p>
+    <p class="font-medium text-gray-800">{data.ifTemp}</p>
+    <div class="mt-2 text-lg font-semibold">
+      <p>{data.temp1}</p>
+      <p>{data.temp2}</p>
+    </div>
+  </div>
+
+  <div class="bg-white p-5 rounded shadow-sm border border-red-100 mb-6">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">{data.doThis}</h3>
+    <ul class="space-y-3">
+      {
+        data.doItems.map((item) => (
+          <li class="flex items-start gap-3">
+            <span class="text-green-600 font-bold text-xl mt-0.5 shrink-0">
+              ✅
+            </span>
+            <span class="text-gray-800 font-medium text-lg leading-snug">
+              {item}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="bg-white p-5 rounded shadow-sm border border-gray-200 mb-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-3">
+      {data.hospitalWillDo}
+    </h3>
+    <ul class="list-disc pl-5 space-y-2">
+      {data.hospItems.map((item) => <li class="text-gray-700">{item}</li>)}
+    </ul>
+  </div>
+
+  <p
+    class="text-center font-bold text-red-700 text-lg uppercase bg-red-100 py-2 rounded"
+  >
+    {data.neverWait}
+  </p>
+</div>

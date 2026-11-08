@@ -1,0 +1,144 @@
+---
+import type { Locale } from "../../i18n/translations";
+
+export interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+---
+
+<article class="prose max-w-none mb-12">
+  {
+    lang === "fr" ? (
+      <div>
+        <h2>1. Couverture des régimes provinciaux de santé au Canada</h2>
+        <p>
+          Au Canada, les régimes publics d'assurance maladie (comme la RAMQ au
+          Québec, l'OHIP en Ontario et le MSP en Colombie-Britannique)
+          fonctionnent conformément à la <em>Loi canadienne sur la santé</em>.{" "}
+          <strong>
+            Tous les soins et séjours hospitaliers médicalement nécessaires sont
+            entièrement pris en charge sans frais directs.
+          </strong>
+        </p>
+        <ul>
+          <li>
+            <strong>Traitements hospitaliers :</strong> Chimiothérapie,
+            radiothérapie, chirurgies et thérapies cellulaires reçues à
+            l'hôpital.
+          </li>
+          <li>
+            <strong>Frais non couverts à prévoir :</strong> Médicaments pris à
+            domicile (ex. antiémétiques oraux), stationnement hospitalier,
+            déplacements et hébergement.
+          </li>
+        </ul>
+
+        <h2>2. Prestation d'assurance-emploi pour proches aidants d'enfants</h2>
+        <p>
+          Le gouvernement du Canada offre la{" "}
+          <strong>Prestation pour proches aidants d'enfants</strong> pour
+          compenser la perte de revenu des parents devant s'absenter du travail
+          afin de soutenir un enfant gravement malade :
+        </p>
+        <ul>
+          <li>
+            <strong>Durée :</strong> Jusqu'à <strong>35 semaines</strong> de
+            prestations partagables entre les parents.
+          </li>
+          <li>
+            <strong>Admissibilité :</strong> Réduction de plus de 40 % du revenu
+            hebdomadaire et 600 heures d'emploi assurable.
+          </li>
+        </ul>
+      </div>
+    ) : lang === "zh" ? (
+      <div>
+        <h2>1. 加拿大各省医疗保险 (Medicare) 覆盖范围</h2>
+        <p>
+          在加拿大，《加拿大卫生法》(Canada Health Act)
+          确保所有居民在公立医院内接受的
+          <strong>
+            所有必要医疗服务（包括住院、化疗、手术、放疗及院内处方药）均由省医保100%全额覆盖
+          </strong>
+          。
+        </p>
+        <ul>
+          <li>
+            <strong>医院内全额报销项目：</strong>{" "}
+            肿瘤手术、住院化疗与放疗、专科医生会诊、住院期间所有药物。
+          </li>
+          <li>
+            <strong>可能产生的自费开支：</strong>{" "}
+            出院后带回家的口服药物、医院停车费、跨城市就医的交通与住宿费。
+          </li>
+        </ul>
+
+        <h2>2. 加拿大联邦就业保险 (EI) 儿童看护津贴</h2>
+        <p>
+          为照顾重病患儿而需要暂停工作的父母，可申请加拿大联邦政府提供的
+          <strong>
+            重病儿童看护津贴 (Family Caregiver Benefit for Children)
+          </strong>
+          ：
+        </p>
+        <ul>
+          <li>
+            <strong>津贴周数：</strong> 最多可领取 <strong>35 周</strong>
+            ，可在52周内分段使用。
+          </li>
+          <li>
+            <strong>申请条件：</strong>{" "}
+            每周收入减少40%以上，且在申请前52周内累计至少600小时受保工作时间。
+          </li>
+        </ul>
+      </div>
+    ) : (
+      <div>
+        <h2>1. Provincial Healthcare Coverage: What to Expect</h2>
+        <p>
+          In Canada, provincial healthcare systems operate under the{" "}
+          <em>Canada Health Act</em>. This means that{" "}
+          <strong>
+            medically necessary services provided in a hospital are fully
+            covered
+          </strong>
+          .
+        </p>
+        <ul>
+          <li>
+            <strong>In-Hospital Treatments:</strong> Chemotherapy, radiation,
+            cellular therapies, and surgeries administered while your child is
+            admitted.
+          </li>
+          <li>
+            <strong>Out-of-Pocket Expenses:</strong> Take-home prescriptions,
+            hospital parking, and travel/accommodation.
+          </li>
+        </ul>
+
+        <h2>
+          2. Employment Insurance (EI): Family Caregiver Benefit for Children
+        </h2>
+        <p>
+          The Government of Canada offers the{" "}
+          <strong>Family Caregiver Benefit for Children</strong> to help offset
+          lost income when parents take time away from work:
+        </p>
+        <ul>
+          <li>
+            <strong>Duration:</strong> Up to <strong>35 weeks</strong> of
+            benefits, shareable between eligible caregivers over a 52-week
+            window.
+          </li>
+          <li>
+            <strong>Eligibility:</strong> A reduction of more than 40% in
+            regular weekly earnings and 600 insurable hours accumulated in the
+            preceding 52 weeks.
+          </li>
+        </ul>
+      </div>
+    )
+  }
+</article>

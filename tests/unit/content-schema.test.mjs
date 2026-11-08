@@ -173,3 +173,54 @@ test("Content Schema: Provinces collection has 13 Canadian provinces/territories
     }
   }
 });
+
+test("Checklists Data: hospital bag, emergency fever protocol, and tracker are defined across all locales", async () => {
+  const { checklistsData } = await import("../../src/data/checklistsData.ts");
+  const locales = ["en", "fr", "zh"];
+
+  for (const lang of locales) {
+    const data = checklistsData[lang];
+    assert.ok(data, `Missing checklist data for locale ${lang}`);
+    assert.ok(data.title.trim().length > 0, `Empty title for ${lang}`);
+    assert.ok(data.printBtn.trim().length > 0, `Empty printBtn for ${lang}`);
+
+    // Hospital bag
+    assert.ok(
+      data.hospitalBag.childItems.length >= 5,
+      `Expected >= 5 child items in ${lang}`,
+    );
+    assert.ok(
+      data.hospitalBag.parentItems.length >= 5,
+      `Expected >= 5 parent items in ${lang}`,
+    );
+    assert.ok(
+      data.hospitalBag.docItems.length >= 3,
+      `Expected >= 3 doc items in ${lang}`,
+    );
+
+    // Fever protocol
+    assert.ok(
+      data.fever.doItems.length >= 4,
+      `Expected >= 4 fever action items in ${lang}`,
+    );
+    assert.ok(
+      data.fever.hospItems.length >= 2,
+      `Expected >= 2 hospital action items in ${lang}`,
+    );
+    assert.ok(
+      data.fever.warning.includes("⚠️"),
+      `Warning banner missing emoji in ${lang}`,
+    );
+
+    // Tracker
+    assert.strictEqual(
+      data.tracker.days.length,
+      8,
+      `Expected 8 tracker column headers (7 days + Notes) in ${lang}`,
+    );
+    assert.ok(
+      data.tracker.rows.length >= 8,
+      `Expected >= 8 tracker rows in ${lang}`,
+    );
+  }
+});

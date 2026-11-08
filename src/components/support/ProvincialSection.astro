@@ -1,0 +1,108 @@
+---
+import ResourceCard from "../ResourceCard.astro";
+import type { CollectionEntry } from "astro:content";
+import type { Locale } from "../../i18n/translations";
+
+export interface Props {
+  province: CollectionEntry<"provinces">;
+  provCharities: CollectionEntry<"charities">[];
+  lang: Locale;
+  labels: {
+    selectedResources: string;
+    hospitalsHeading: string;
+    financialHeading: string;
+    provincialCharitiesHeading: string;
+  };
+}
+
+const { province: prov, provCharities, lang, labels } = Astro.props;
+
+const hospitalTag =
+  "🏥 " + (lang === "fr" ? "Hôpital" : lang === "zh" ? "医院" : "Hospital");
+
+const financialTag =
+  "💰 " + (lang === "fr" ? "Finances" : lang === "zh" ? "财务" : "Financial");
+
+const provincialCharityTag =
+  "📍 " +
+  (lang === "fr" ? "Provincial" : lang === "zh" ? "省/地区" : "Provincial");
+---
+
+<section
+  class="province-view hidden mt-12"
+  data-province-id={prov.data.province_key}
+>
+  <h2 class="text-3xl font-bold text-primary mb-6 border-b pb-2">
+    {prov.data.title}
+    {labels.selectedResources}
+  </h2>
+
+  {
+    prov.body && (
+      <div class="mb-8 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-sm italic rounded-r">
+        <Fragment set:html={prov.body} />
+      </div>
+    )
+  }
+
+  <div class="mb-10">
+    <h3 class="text-xl font-bold text-gray-800 mb-4">
+      {labels.hospitalsHeading}
+    </h3>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        prov.data.hospitals.map((h) => (
+          <ResourceCard
+            title={h.name}
+            desc={h.desc}
+            link={h.linkUrl}
+            linkText={h.linkText}
+            tags={[hospitalTag]}
+            lang={lang}
+          />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="mb-10">
+    <h3 class="text-xl font-bold text-gray-800 mb-4">
+      {labels.financialHeading}
+    </h3>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        prov.data.financial.map((f) => (
+          <ResourceCard
+            title={f.name}
+            desc={f.desc}
+            link={f.url}
+            tags={[financialTag]}
+            lang={lang}
+          />
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    provCharities.length > 0 && (
+      <div class="mb-10">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">
+          {labels.provincialCharitiesHeading}
+        </h3>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {provCharities.map((c) => (
+            <ResourceCard
+              title={c.data.name}
+              desc={c.body || ""}
+              link={c.data.url}
+              services={c.data.services}
+              tags={[provincialCharityTag]}
+              lang={lang}
+            />
+          ))}
+        </div>
+      </div>
+    )
+  }
+</section>

@@ -1,0 +1,54 @@
+---
+import ResourceCard from "../ResourceCard.astro";
+import type { Locale } from "../../i18n/translations";
+
+export interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+const usHospitals = [
+  {
+    name: "St. Jude Children's Research Hospital (Memphis, TN)",
+    desc:
+      lang === "fr"
+        ? "Hôpital de renommée mondiale dédié aux maladies infantiles catastrophiques et créateurs de Together by St. Jude™."
+        : lang === "zh"
+          ? "全球公认的儿童恶性肿瘤顶级科研与治疗机构，Together by St. Jude™ 的创办者。"
+          : "Globally recognized leader in catastrophic childhood disease research and creators of Together by St. Jude™.",
+    linkText: "Together by St. Jude™ Education Hub",
+    linkUrl: "https://together.stjude.org/",
+  },
+  {
+    name: "Children's Hospital of Philadelphia (CHOP) (Philadelphia, PA)",
+    desc:
+      lang === "fr"
+        ? "Pionnier mondial des thérapies cellulaires et du soutien psychosocial des familles."
+        : lang === "zh"
+          ? "在儿童白血病免疫治疗、细胞疗法和家庭心理健康支持领域享誉国际。"
+          : "World leader in cellular immunotherapy clinical trials and holistic family psychosocial support.",
+    linkText: "CHOP Cancer Center Resources",
+    linkUrl: "https://www.chop.edu/cancer",
+  },
+];
+
+const internationalTag =
+  "🌎 " +
+  (lang === "fr" ? "International" : lang === "zh" ? "国际" : "International");
+---
+
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  {
+    usHospitals.map((h) => (
+      <ResourceCard
+        title={h.name}
+        desc={h.desc}
+        link={h.linkUrl}
+        linkText={h.linkText}
+        tags={[internationalTag]}
+        lang={lang}
+      />
+    ))
+  }
+</div>

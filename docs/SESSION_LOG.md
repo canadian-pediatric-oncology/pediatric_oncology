@@ -299,3 +299,23 @@ This document serves as a continuous record of changes, ensuring full transparen
   6. **Unit Test Harness:** Added native `node:test` suite (`tests/unit/i18n-parity.test.mjs` and `tests/unit/content-schema.test.mjs`) wired into `npm run test:unit`, `npm test`, and `npm run ci` (5/5 tests passing in < 170ms).
   7. **Repository Hygiene:** Purged over 20 obsolete one-off migration and scratch scripts from `scripts/` and root (`gen_base64.cjs`, `update_urls.cjs`), added `pa11y: ^9.1.1` explicitly to `package.json`, and tightened CI link checking status codes.
 - **Status:** Verified locally. `npm run check` (0 errors), `npm run test:unit` (5/5 passing), `npm run ci` (0 errors, 107 pages generated), Playwright E2E (11/11 passing).
+
+**[13:54] Phase 3 Modular Architecture: Decomposition of God-Files (Checklists & Support)**
+
+- **Action:** Executed Phase 3 component decomposition to eliminate the remaining god-files identified in the architectural audit (`checklists.astro` and `support.astro`), reducing combined line count from 1,076 lines to 357 lines (67% reduction) while preserving 100% of functionality, accessibility, and Canadian-first clinical accuracy.
+- **Decomposition Executed:**
+  1. **Checklists Modularization (`src/pages/[lang]/checklists.astro`):**
+     - Extracted 260 lines of trilingual checklist copy into type-safe data model [`src/data/checklistsData.ts`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/data/checklistsData.ts) (`ChecklistPageData`, `HospitalBagData`, `EmergencyFeverData`, `WeeklyTrackerData`).
+     - Extracted [`src/components/checklists/HospitalBagCard.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/checklists/HospitalBagCard.astro) containing the interactive checklist layout and `<interactive-checklist>` custom element with localStorage state persistence.
+     - Extracted [`src/components/checklists/EmergencyProtocolCard.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/checklists/EmergencyProtocolCard.astro) rendering the high-contrast emergency fever protocol.
+     - Extracted [`src/components/checklists/WeeklyTrackerTable.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/checklists/WeeklyTrackerTable.astro) containing the printable medication and temperature table.
+     - Reduced `checklists.astro` from 563 lines to 102 lines.
+  2. **Support & Resources Modularization (`src/pages/[lang]/support.astro`):**
+     - Extracted [`src/components/support/GovernmentBenefits.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/support/GovernmentBenefits.astro) detailing the _Canada Health Act_ coverage and Federal Employment Insurance (EI) Family Caregiver Benefit for Children.
+     - Extracted [`src/components/support/InternationalHospitalGrid.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/support/InternationalHospitalGrid.astro) encapsulating international fallback hospital resources (St. Jude, CHOP).
+     - Extracted [`src/components/support/ProvincialSection.astro`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/src/components/support/ProvincialSection.astro) rendering provincial hospital cards, provincial financial aid cards, and provincial charity cards.
+     - Reduced `support.astro` from 513 lines to 255 lines.
+  3. **Automated Test Expansion:**
+     - Added new native unit test in [`tests/unit/content-schema.test.mjs`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/tests/unit/content-schema.test.mjs) verifying checklist data integrity, parity, and structure across all 3 locales (6/6 tests passing).
+     - Created [`e2e/checklists.spec.ts`](file:///Users/arthurli/.gemini/antigravity/scratch/pediatric_oncology/e2e/checklists.spec.ts) covering checklist rendering, localStorage checkbox interactivity, and multilingual routing.
+- **Status:** Verified locally. `npm run check` (0 errors across 56 files), `npm run test:unit` (6/6 passing in 178ms), Prettier format check passed, `npm run ci` passed 100% (107 pages generated + Pagefind indexed).

@@ -1,0 +1,124 @@
+---
+import type { HospitalBagData } from "../../data/checklistsData";
+
+export interface Props {
+  data: HospitalBagData;
+}
+
+const { data } = Astro.props;
+---
+
+<div
+  class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-12 print:mb-8 print:shadow-none print:border-gray-300 page-break-after"
+>
+  <h2
+    class="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-gray-100"
+  >
+    {data.title}
+  </h2>
+
+  <interactive-checklist class="block">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 print:grid-cols-2">
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-3">
+          {data.forChild}
+        </h3>
+        <ul class="space-y-3 mb-6">
+          {
+            data.childItems.map((item) => (
+              <li class="flex items-start gap-3 group">
+                <label class="flex items-start gap-3 cursor-pointer select-none w-full">
+                  <input
+                    type="checkbox"
+                    aria-label={item}
+                    class="checklist-checkbox w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary mt-0.5 cursor-pointer print:appearance-none print:w-4 print:h-4 print:border-2 print:border-gray-500 shrink-0"
+                  />
+                  <span class="text-gray-700 group-has-[:checked]:line-through group-has-[:checked]:text-gray-400 transition-colors">
+                    {item}
+                  </span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="text-lg font-semibold text-primary mb-3">
+          {data.importantDocs}
+        </h3>
+        <ul class="space-y-3">
+          {
+            data.docItems.map((item) => (
+              <li class="flex items-start gap-3 group">
+                <label class="flex items-start gap-3 cursor-pointer select-none w-full">
+                  <input
+                    type="checkbox"
+                    aria-label={item}
+                    class="checklist-checkbox w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary mt-0.5 cursor-pointer print:appearance-none print:w-4 print:h-4 print:border-2 print:border-gray-500 shrink-0"
+                  />
+                  <span class="text-gray-700 group-has-[:checked]:line-through group-has-[:checked]:text-gray-400 transition-colors">
+                    {item}
+                  </span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-primary mb-3">
+          {data.forParent}
+        </h3>
+        <ul class="space-y-3">
+          {
+            data.parentItems.map((item) => (
+              <li class="flex items-start gap-3 group">
+                <label class="flex items-start gap-3 cursor-pointer select-none w-full">
+                  <input
+                    type="checkbox"
+                    aria-label={item}
+                    class="checklist-checkbox w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary mt-0.5 cursor-pointer print:appearance-none print:w-4 print:h-4 print:border-2 print:border-gray-500 shrink-0"
+                  />
+                  <span class="text-gray-700 group-has-[:checked]:line-through group-has-[:checked]:text-gray-400 transition-colors">
+                    {item}
+                  </span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </interactive-checklist>
+</div>
+
+<script>
+  class InteractiveChecklist extends HTMLElement {
+    connectedCallback() {
+      const checkboxes = this.querySelectorAll<HTMLInputElement>(
+        ".checklist-checkbox",
+      );
+      const storageKey = "peds_onco_hospital_checklist";
+
+      // Restore saved state
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        checkboxes.forEach((cb, index) => {
+          if (saved[index]) {
+            cb.checked = true;
+          }
+          cb.addEventListener("change", () => {
+            saved[index] = cb.checked;
+            localStorage.setItem(storageKey, JSON.stringify(saved));
+          });
+        });
+      } catch (e) {
+        // Fallback gracefully if localStorage is unavailable
+      }
+    }
+  }
+
+  if (!customElements.get("interactive-checklist")) {
+    customElements.define("interactive-checklist", InteractiveChecklist);
+  }
+</script>

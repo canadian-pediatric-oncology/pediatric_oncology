@@ -2,6 +2,9 @@
 import Layout from "../../layouts/Layout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import ResourceCard from "../../components/ResourceCard.astro";
+import GovernmentBenefits from "../../components/support/GovernmentBenefits.astro";
+import InternationalHospitalGrid from "../../components/support/InternationalHospitalGrid.astro";
+import ProvincialSection from "../../components/support/ProvincialSection.astro";
 import { translations, type Locale } from "../../i18n/translations";
 import { getCollection } from "astro:content";
 
@@ -23,31 +26,6 @@ const homeUrl =
 const breadcrumbs = [
   { label: t.nav.home, href: homeUrl },
   { label: t.nav.support },
-];
-
-const usHospitals = [
-  {
-    name: "St. Jude Children's Research Hospital (Memphis, TN)",
-    desc:
-      currentLang === "fr"
-        ? "Hôpital de renommée mondiale dédié aux maladies infantiles catastrophiques..."
-        : currentLang === "zh"
-          ? "全球公认的儿童恶性肿瘤顶级科研与治疗机构..."
-          : "Globally recognized leader in catastrophic childhood disease research and creators of Together by St. Jude™.",
-    linkText: "Together by St. Jude™ Education Hub",
-    linkUrl: "https://together.stjude.org/",
-  },
-  {
-    name: "Children's Hospital of Philadelphia (CHOP) (Philadelphia, PA)",
-    desc:
-      currentLang === "fr"
-        ? "Pionnier mondial des thérapies cellulaires et du soutien psychosocial des familles."
-        : currentLang === "zh"
-          ? "在儿童白血病免疫治疗、细胞疗法和家庭心理健康支持领域享誉国际。"
-          : "World leader in cellular immunotherapy clinical trials and holistic family psychosocial support.",
-    linkText: "CHOP Cancer Center Resources",
-    linkUrl: "https://www.chop.edu/cancer",
-  },
 ];
 
 const provinces = await getCollection(
@@ -72,32 +50,44 @@ const nationalCharities = allCharities
     return (scopeOrder[a.data.scope] || 9) - (scopeOrder[b.data.scope] || 9);
   });
 
-function getScopeTag(scope: string, lang: string) {
+function getScopeTag(scope: string, l: string) {
   if (scope === "national")
-    return (
-      "🇨🇦 " + (lang === "fr" ? "National" : lang === "zh" ? "全国" : "National")
-    );
+    return "🇨🇦 " + (l === "fr" ? "National" : l === "zh" ? "全国" : "National");
   if (scope === "provincial")
     return (
       "📍 " +
-      (lang === "fr" ? "Provincial" : lang === "zh" ? "省/地区" : "Provincial")
+      (l === "fr" ? "Provincial" : l === "zh" ? "省/地区" : "Provincial")
     );
   if (scope === "indigenous")
     return (
-      "🪶 " +
-      (lang === "fr" ? "Autochtone" : lang === "zh" ? "原住民" : "Indigenous")
+      "🪶 " + (l === "fr" ? "Autochtone" : l === "zh" ? "原住民" : "Indigenous")
     );
   if (scope === "international")
     return (
       "🌎 " +
-      (lang === "fr"
-        ? "International"
-        : lang === "zh"
-          ? "国际"
-          : "International")
+      (l === "fr" ? "International" : l === "zh" ? "国际" : "International")
     );
   return "";
 }
+
+const labels = {
+  selectedResources: t.filter.selectedResources,
+  hospitalsHeading: t.filter.hospitalsHeading,
+  financialHeading: t.filter.financialHeading,
+  provincialCharitiesHeading:
+    currentLang === "fr"
+      ? "Organismes de bienfaisance provinciaux"
+      : currentLang === "zh"
+        ? "省级慈善机构"
+        : "Provincial Charities & Support",
+};
+
+const fallbackHeading =
+  currentLang === "fr"
+    ? "Ressources internationales et de dernier recours"
+    : currentLang === "zh"
+      ? "国际与备用资源"
+      : "International & Fallback Resources";
 ---
 
 <Layout
@@ -116,13 +106,14 @@ function getScopeTag(scope: string, lang: string) {
           stroke="currentColor"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
-          ><path
+        >
+          <path
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-          ></path></svg
-        >
+          ></path>
+        </svg>
       </div>
       <h1
         class="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl text-balance"
@@ -139,8 +130,9 @@ function getScopeTag(scope: string, lang: string) {
       <label
         for="province-select"
         class="block text-lg font-bold text-gray-900 mb-4"
-        >{t.filter.label}</label
       >
+        {t.filter.label}
+      </label>
       <select
         id="province-select"
         class="block w-full max-w-sm pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-gray-50 border"
@@ -164,93 +156,12 @@ function getScopeTag(scope: string, lang: string) {
               c.data.province === prov.data.title,
           );
           return (
-            <section
-              class="province-view hidden mt-12"
-              data-province-id={prov.data.province_key}
-            >
-              <h2 class="text-3xl font-bold text-primary mb-6 border-b pb-2">
-                {prov.data.title} {t.filter.selectedResources}
-              </h2>
-
-              {prov.body && (
-                <div class="mb-8 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-sm italic rounded-r">
-                  <Fragment set:html={prov.body} />
-                </div>
-              )}
-
-              <div class="mb-10">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">
-                  {t.filter.hospitalsHeading}
-                </h3>
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {prov.data.hospitals.map((h) => (
-                    <ResourceCard
-                      title={h.name}
-                      desc={h.desc}
-                      link={h.linkUrl}
-                      linkText={h.linkText}
-                      tags={[
-                        "🏥 " +
-                          (currentLang === "fr"
-                            ? "Hôpital"
-                            : currentLang === "zh"
-                              ? "医院"
-                              : "Hospital"),
-                      ]}
-                      lang={currentLang}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div class="mb-10">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">
-                  {t.filter.financialHeading}
-                </h3>
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {prov.data.financial.map((f) => (
-                    <ResourceCard
-                      title={f.name}
-                      desc={f.desc}
-                      link={f.url}
-                      tags={[
-                        "💰 " +
-                          (currentLang === "fr"
-                            ? "Finances"
-                            : currentLang === "zh"
-                              ? "财务"
-                              : "Financial"),
-                      ]}
-                      lang={currentLang}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {provCharities.length > 0 && (
-                <div class="mb-10">
-                  <h3 class="text-xl font-bold text-gray-800 mb-4">
-                    {currentLang === "fr"
-                      ? "Organismes de bienfaisance provinciaux"
-                      : currentLang === "zh"
-                        ? "省级慈善机构"
-                        : "Provincial Charities & Support"}
-                  </h3>
-                  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {provCharities.map((c) => (
-                      <ResourceCard
-                        title={c.data.name}
-                        desc={c.body || ""}
-                        link={c.data.url}
-                        services={c.data.services}
-                        tags={[getScopeTag(c.data.scope, currentLang)]}
-                        lang={currentLang}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </section>
+            <ProvincialSection
+              province={prov}
+              provCharities={provCharities}
+              lang={currentLang}
+              labels={labels}
+            />
           );
         })
       }
@@ -284,185 +195,15 @@ function getScopeTag(scope: string, lang: string) {
         class="pt-8 border-t border-gray-200"
       >
         <h2 class="text-2xl font-bold text-gray-900 mb-2">
-          {
-            currentLang === "fr"
-              ? "Ressources internationales et de dernier recours"
-              : currentLang === "zh"
-                ? "国际与备用资源"
-                : "International & Fallback Resources"
-          }
+          {fallbackHeading}
         </h2>
         <p class="text-gray-600 mb-6 text-sm sm:text-base">
           {t.support.nationalSubtitle}
         </p>
 
-        <article class="prose max-w-none mb-12">
-          {
-            currentLang === "fr" ? (
-              <div>
-                <h2>
-                  1. Couverture des régimes provinciaux de santé au Canada
-                </h2>
-                <p>
-                  Au Canada, les régimes publics d'assurance maladie (comme la
-                  RAMQ au Québec, l'OHIP en Ontario et le MSP en
-                  Colombie-Britannique) fonctionnent conformément à la{" "}
-                  <em>Loi canadienne sur la santé</em>.{" "}
-                  <strong>
-                    Tous les soins et séjours hospitaliers médicalement
-                    nécessaires sont entièrement pris en charge sans frais
-                    directs.
-                  </strong>
-                </p>
-                <ul>
-                  <li>
-                    <strong>Traitements hospitaliers :</strong> Chimiothérapie,
-                    radiothérapie, chirurgies et thérapies cellulaires reçues à
-                    l'hôpital.
-                  </li>
-                  <li>
-                    <strong>Frais non couverts à prévoir :</strong> Médicaments
-                    pris à domicile (ex. antiémétiques oraux), stationnement
-                    hospitalier, déplacements et hébergement.
-                  </li>
-                </ul>
+        <GovernmentBenefits lang={currentLang} />
 
-                <h2>
-                  2. Prestation d'assurance-emploi pour proches aidants
-                  d'enfants
-                </h2>
-                <p>
-                  Le gouvernement du Canada offre la{" "}
-                  <strong>Prestation pour proches aidants d'enfants</strong>{" "}
-                  pour compenser la perte de revenu des parents devant
-                  s'absenter du travail afin de soutenir un enfant gravement
-                  malade :
-                </p>
-                <ul>
-                  <li>
-                    <strong>Durée :</strong> Jusqu'à{" "}
-                    <strong>35 semaines</strong> de prestations partagables
-                    entre les parents.
-                  </li>
-                  <li>
-                    <strong>Admissibilité :</strong> Réduction de plus de 40 %
-                    du revenu hebdomadaire et 600 heures d'emploi assurable.
-                  </li>
-                </ul>
-              </div>
-            ) : currentLang === "zh" ? (
-              <div>
-                <h2>1. 加拿大各省医疗保险 (Medicare) 覆盖范围</h2>
-                <p>
-                  在加拿大，《加拿大卫生法》(Canada Health Act)
-                  确保所有居民在公立医院内接受的
-                  <strong>
-                    所有必要医疗服务（包括住院、化疗、手术、放疗及院内处方药）均由省医保100%全额覆盖
-                  </strong>
-                  。
-                </p>
-                <ul>
-                  <li>
-                    <strong>医院内全额报销项目：</strong>{" "}
-                    肿瘤手术、住院化疗与放疗、专科医生会诊、住院期间所有药物。
-                  </li>
-                  <li>
-                    <strong>可能产生的自费开支：</strong>{" "}
-                    出院后带回家的口服药物、医院停车费、跨城市就医的交通与住宿费。
-                  </li>
-                </ul>
-
-                <h2>2. 加拿大联邦就业保险 (EI) 儿童看护津贴</h2>
-                <p>
-                  为照顾重病患儿而需要暂停工作的父母，可申请加拿大联邦政府提供的
-                  <strong>
-                    重病儿童看护津贴 (Family Caregiver Benefit for Children)
-                  </strong>
-                  ：
-                </p>
-                <ul>
-                  <li>
-                    <strong>津贴周数：</strong> 最多可领取{" "}
-                    <strong>35 周</strong>
-                    ，可在52周内分段使用。
-                  </li>
-                  <li>
-                    <strong>申请条件：</strong>{" "}
-                    每周收入减少40%以上，且在申请前52周内累计至少600小时受保工作时间。
-                  </li>
-                </ul>
-              </div>
-            ) : (
-              <div>
-                <h2>1. Provincial Healthcare Coverage: What to Expect</h2>
-                <p>
-                  In Canada, provincial healthcare systems operate under the{" "}
-                  <em>Canada Health Act</em>. This means that{" "}
-                  <strong>
-                    medically necessary services provided in a hospital are
-                    fully covered
-                  </strong>
-                  .
-                </p>
-                <ul>
-                  <li>
-                    <strong>In-Hospital Treatments:</strong> Chemotherapy,
-                    radiation, cellular therapies, and surgeries administered
-                    while your child is admitted.
-                  </li>
-                  <li>
-                    <strong>Out-of-Pocket Expenses:</strong> Take-home
-                    prescriptions, hospital parking, and travel/accommodation.
-                  </li>
-                </ul>
-
-                <h2>
-                  2. Employment Insurance (EI): Family Caregiver Benefit for
-                  Children
-                </h2>
-                <p>
-                  The Government of Canada offers the{" "}
-                  <strong>Family Caregiver Benefit for Children</strong> to help
-                  offset lost income when parents take time away from work:
-                </p>
-                <ul>
-                  <li>
-                    <strong>Duration:</strong> Up to <strong>35 weeks</strong>{" "}
-                    of benefits, shareable between eligible caregivers over a
-                    52-week window.
-                  </li>
-                  <li>
-                    <strong>Eligibility:</strong> A reduction of more than 40%
-                    in regular weekly earnings and 600 insurable hours
-                    accumulated in the preceding 52 weeks.
-                  </li>
-                </ul>
-              </div>
-            )
-          }
-        </article>
-
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {
-            usHospitals.map((h) => (
-              <ResourceCard
-                title={h.name}
-                desc={h.desc}
-                link={h.linkUrl}
-                linkText={h.linkText}
-                tags={[
-                  "🌎 " +
-                    (currentLang === "fr"
-                      ? "International"
-                      : currentLang === "zh"
-                        ? "国际"
-                        : "International"),
-                ]}
-                lang={currentLang}
-              />
-            ))
-          }
-        </div>
+        <InternationalHospitalGrid lang={currentLang} />
       </section>
     </div>
   </provincial-support-manager>
