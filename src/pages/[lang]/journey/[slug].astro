@@ -8,19 +8,30 @@ import { translations, type Locale } from "../../../i18n/translations";
 
 export async function getStaticPaths() {
   const allJourneySteps = await getCollection("journey");
+  const locales = ["en", "fr", "zh"] as const;
 
-  return allJourneySteps.map((step) => {
-    const [lang, filename] = step.id.split("/");
-    const slug = filename.replace(".md", "");
+  return locales.flatMap((lang) => {
+    const stepsInLang = allJourneySteps
+      .filter((s) => s.id.startsWith(`${lang}/`))
+      .sort((a, b) => a.data.step - b.data.step);
 
-    return {
-      params: { lang, slug },
-      props: { step },
-    };
+    return stepsInLang.map((step, index) => {
+      const slug = step.id.split("/")[1].replace(".md", "");
+      return {
+        params: { lang, slug },
+        props: {
+          step,
+          totalSteps: stepsInLang.length,
+          prevStep: index > 0 ? stepsInLang[index - 1] : null,
+          nextStep:
+            index < stepsInLang.length - 1 ? stepsInLang[index + 1] : null,
+        },
+      };
+    });
   });
 }
 
-const { step } = Astro.props;
+const { step, totalSteps, prevStep, nextStep } = Astro.props;
 const { Content } = await render(step);
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const currentLang = (step.data.lang as Locale) || "en";
@@ -29,21 +40,8 @@ const homeUrl =
   currentLang === "en" ? `${basePath}/` : `${basePath}/${currentLang}`;
 const langPrefix = `${basePath}/${currentLang}`;
 
-// To figure out next and previous, we query the same language collection
-const allStepsInLang = await getCollection("journey", (s) =>
-  s.id.startsWith(`${step.data.lang}/`),
-);
-allStepsInLang.sort((a, b) => a.data.step - b.data.step);
-
-const currentIndex = allStepsInLang.findIndex((s) => s.id === step.id);
-const prevStep = currentIndex > 0 ? allStepsInLang[currentIndex - 1] : null;
-const nextStep =
-  currentIndex < allStepsInLang.length - 1
-    ? allStepsInLang[currentIndex + 1]
-    : null;
-
 // Helper to construct URLs
-const getUrl = (s: any) => {
+const getUrl = (s: typeof step) => {
   const [lang, filename] = s.id.split("/");
   return `${basePath}/${lang}/journey/${filename.replace(".md", "")}`;
 };
@@ -82,7 +80,7 @@ const structuredData = {
   title={step.data.title}
   lang={step.data.lang}
   type="article"
-  description={`Step ${step.data.step} of ${allStepsInLang.length}: ${step.data.title}. Medically verified roadmap for Canadian families.`}
+  description={`Step ${step.data.step} of ${totalSteps}: ${step.data.title}. Medically verified roadmap for Canadian families.`}
   modifiedTime={step.data.last_medically_reviewed_date || "2026-08-23"}
   structuredData={structuredData}
 >
@@ -107,10 +105,10 @@ const structuredData = {
         >
           {
             step.data.lang === "fr"
-              ? `Étape ${step.data.step} de ${allStepsInLang.length}`
+              ? `Étape ${step.data.step} de ${totalSteps}`
               : step.data.lang === "zh"
-                ? `第 ${step.data.step} 阶段 (共 ${allStepsInLang.length} 阶段)`
-                : `Step ${step.data.step} of ${allStepsInLang.length}`
+                ? `第 ${step.data.step} 阶段 (共 ${totalSteps} 阶段)`
+                : `Step ${step.data.step} of ${totalSteps}`
           }
         </span>
         <h1

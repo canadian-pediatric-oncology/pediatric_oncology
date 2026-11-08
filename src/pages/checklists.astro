@@ -1,26 +1,31 @@
 ---
-import Layout from "../layouts/Layout.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const targetPath = `${basePath}/en/checklists`;
 ---
 
-<Layout title="Redirecting..." lang="en">
+<!doctype html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content={`0;url=${basePath}/en/checklists`} />
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content={`0;url=${targetPath}`} />
+    <link rel="canonical" href={targetPath} />
+    <title>Redirecting...</title>
     <script is:inline define:vars={{ basePath }}>
-      // Attempt to respect browser language preference
       const lang = navigator.language.split("-")[0];
       const targetLang = ["en", "fr", "zh"].includes(lang) ? lang : "en";
-      window.location.href = `${basePath}/${targetLang}/checklists`;
+      window.location.replace(`${basePath}/${targetLang}/checklists`);
     </script>
   </head>
-  <body class="flex items-center justify-center min-h-screen bg-gray-50">
-    <div class="text-center">
-      <p class="text-gray-500 mb-4">
+  <body
+    class="flex items-center justify-center min-h-screen bg-gray-50 text-center font-sans p-4"
+  >
+    <div>
+      <p class="text-gray-600 mb-4">
         Redirecting you to the Checklists page...
       </p>
-      <a href={`${basePath}/en/checklists`} class="text-primary hover:underline"
-        >Click here if you are not redirected automatically.</a
-      >
+      <a href={targetPath} class="text-primary hover:underline">
+        Click here if you are not redirected automatically.
+      </a>
     </div>
   </body>
-</Layout>
+</html>

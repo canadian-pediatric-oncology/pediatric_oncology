@@ -284,3 +284,19 @@ This document serves as a continuous record of changes, ensuring full transparen
   4. **Robust Automated A11y Suite:** Created `scripts/audit-a11y.cjs` which uses Pa11y directly with Playwright's Chromium executable across all 107 real content routes, completely resolving `pa11y-ci` Puppeteer target close / protocol errors caused by meta refresh redirect stubs.
   5. **CI Workflow Integration:** Updated `.github/workflows/ci.yml` accessibility-audit job to use `npx playwright install --with-deps chromium` and run `npm run test:a11y`.
 - **Status:** Verified locally. 100% WCAG 2.1 AA compliance achieved across all 107 routes (0 errors). `npm run ci` passing. Playwright E2E 11/11 tests passing.
+
+**[13:28] Architecture, Security & Code Quality Hardening**
+
+- **Action:** Executed the approved comprehensive architectural and security improvement plan.
+- **Remediations Executed:**
+  1. **Security - JSON-LD Script Injection Vector Sanitized:** In `src/layouts/Layout.astro`, sanitized JSON-LD stringification via `replace(/</g, "\\u003c")` to prevent potential script breakout vulnerabilities.
+  2. **Security & Guardrail Integrity - Strict Medical & Charity Expiry:**
+     - Overhauled `scripts/check-medical-expiry.cjs` to enforce mandatory `last_medically_reviewed_date` across all 78 clinical files in `journey`, `tumors`, and `symptoms`, failing CI if any file lacks a review date or is expired (> 365 days).
+     - Overhauled `scripts/check-charity-expiry.cjs` to validate all 45 charity files across English, French, and Chinese (`en`, `fr`, `zh`), requiring verified HTTPS URLs and dates within 6 months.
+  3. **Performance - Eliminated N+1 Query in Journey Routing:** Refactored `src/pages/[lang]/journey/[slug].astro` to compute `prevStep`, `nextStep`, and `totalSteps` once in `getStaticPaths()`, eliminating 21 redundant collection lookups, disk reads, and array sorts on each build.
+  4. **Architecture - Clean HTML5 Redirect Stubs:** Replaced malformed redirect stubs (`src/pages/checklists.astro`, `faq.astro`, `glossary.astro`, `support.astro`) with clean HTML5 redirect documents using `window.location.replace` and eliminating invalid nested `<head>` and `<body>` tags inside `<Layout>`.
+  5. **Type Safety - Strict i18n Translation Schema:** Defined `DeepString<T>` recursive schema contract in `src/i18n/translations.ts` enforcing `Record<Locale, TranslationSchema>` to guarantee key parity across `en`, `fr`, and `zh` at compile time.
+  6. **Unit Test Harness:** Added native `node:test` suite (`tests/unit/i18n-parity.test.mjs` and `tests/unit/content-schema.test.mjs`) wired into `npm run test:unit`, `npm test`, and `npm run ci` (5/5 tests passing in < 170ms).
+  7. **Repository Hygiene:** Purged over 20 obsolete one-off migration and scratch scripts from `scripts/` and root (`gen_base64.cjs`, `update_urls.cjs`), added `pa11y: ^9.1.1` explicitly to `package.json`, and tightened CI link checking status codes.
+- **Status:** Verified locally. `npm run check` (0 errors), `npm run test:unit` (5/5 passing), `npm run ci` (0 errors, 107 pages generated), Playwright E2E (11/11 passing).
+

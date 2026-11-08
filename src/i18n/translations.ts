@@ -1,6 +1,6 @@
 export type Locale = "en" | "fr" | "zh";
 
-export const translations = {
+const baseTranslations = {
   en: {
     brandName: "Canadian Pediatric Oncology Resource",
     nav: {
@@ -435,3 +435,14 @@ export const translations = {
     },
   },
 } as const;
+
+type DeepString<T> = {
+  readonly [K in keyof T]: T[K] extends (...args: any[]) => any
+    ? T[K]
+    : T[K] extends object
+      ? DeepString<T[K]>
+      : string;
+};
+
+export type TranslationSchema = DeepString<typeof baseTranslations.en>;
+export const translations: Record<Locale, TranslationSchema> = baseTranslations;

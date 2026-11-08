@@ -78,7 +78,7 @@ jobs:
             --exclude 'https://.*sickkids\.ca.*'
             --exclude 'https://.*aboutkidshealth\.ca.*'
             --exclude 'https://.*ontario\.ca.*'
-            --accept 200,204,301,302,307,308,400,401,403,405,429,500,502,503,530
+            --accept 200,204,301,302,307,308,401,403,405,429
             --timeout 30
             --max-retries 3
             --scheme https --scheme http
